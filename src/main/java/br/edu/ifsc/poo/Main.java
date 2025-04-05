@@ -1,7 +1,4 @@
-package org.example;
-
-import br.edu.ifsc.poo.Endereco;
-import br.edu.ifsc.poo.Pessoa;
+package br.edu.ifsc.poo;
 
 public class Main {
     public static void main(String[] args) {
