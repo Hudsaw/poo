@@ -37,7 +37,7 @@ public class LacosRepeticao {
             }
         } while(opcao != 0);
     }
-
+    // Leia 10 números e exiba a média deles.
     private static void calcularMediaDezNumeros(Scanner scanner) {
         double soma = 0;
         for(int i = 1; i <= 10; i++) {
@@ -46,7 +46,7 @@ public class LacosRepeticao {
         }
         System.out.printf("Média: %.2f\n", soma/10);
     }
-
+    // Leia números até que o usuário digite 0. Ao final, mostre a soma de todos os números lidos.
     private static void somarAteZero(Scanner scanner) {
         double soma = 0;
         double numero;
@@ -57,14 +57,14 @@ public class LacosRepeticao {
         } while(numero != 0);
         System.out.println("Soma total: " + soma);
     }
-
+    // Escreva os números de 100 a 0 na tela, mas apenas os pares.
     private static void exibirPares100a0() {
         for(int i = 100; i >= 0; i -= 2) {
             System.out.print(i + " ");
         }
         System.out.println();
     }
-
+    // Exiba a tabuada de um número informado pelo usuário
     private static void exibirTabuadaCompleta(Scanner scanner) {
         System.out.print("Digite um número para a tabuada: ");
         int numero = scanner.nextInt();
@@ -74,7 +74,7 @@ public class LacosRepeticao {
             System.out.printf("%d x %d = %d\n", numero, i, numero*i);
         }
     }
-
+    // Leia um número e mostre se ele é primo.
     private static void verificarNumeroPrimo(Scanner scanner) {
         System.out.print("Digite um número inteiro: ");
         int numero = scanner.nextInt();

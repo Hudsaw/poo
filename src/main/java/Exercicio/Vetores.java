@@ -1,7 +1,7 @@
 package Exercicio;
 
-import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Vetores {
     public static void executar(Scanner scanner) {
@@ -39,7 +39,7 @@ public class Vetores {
             }
         } while(opcao != 0);
     }
-
+    // Leia 5 números e armazene-os em um vetor. Em seguida, exiba-os na ordem inversa.
     private static void exibirOrdemInversa(Scanner scanner) {
         int[] numeros = new int[5];
         for(int i = 0; i < 5; i++) {
@@ -52,7 +52,7 @@ public class Vetores {
             System.out.println(numeros[i]);
         }
     }
-
+    // Leia 10 números e mostre quantos são pares.
     private static void contarNumerosPares(Scanner scanner) {
         int[] numeros = new int[10];
         int pares = 0;
@@ -67,7 +67,7 @@ public class Vetores {
 
         System.out.println("Quantidade de pares: " + pares);
     }
-
+    // Leia 10 notas e exiba a maior nota.
     private static void encontrarMaiorNota(Scanner scanner) {
         double[] notas = new double[10];
         double maior = 0;
@@ -82,7 +82,7 @@ public class Vetores {
 
         System.out.println("Maior nota: " + maior);
     }
-
+    // Leia 5 nomes e exiba apenas os que começam com a letra A.
     private static void filtrarNomesComA(Scanner scanner) {
         ArrayList<String> nomes = new ArrayList<>();
 
@@ -99,7 +99,7 @@ public class Vetores {
             System.out.println(nome);
         }
     }
-
+    // Leia um vetor de 10 números e conte quantos são maiores que 50.
     private static void contarMaioresQue50(Scanner scanner) {
         int[] numeros = new int[10];
         int contador = 0;
