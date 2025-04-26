@@ -1,7 +1,6 @@
+package nota;
+
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class MainNota {
     public enum Tipo {PENDENTE, NORMAL};
@@ -18,15 +17,15 @@ public class MainNota {
         Tipo tipo = Tipo.PENDENTE;
         
         // Criando produtos
-        Produto produto1 = new Produto("0014", "FARINHA FEIRA NOVA", 3.50);
-        Produto produto2 = new Produto("0011", "MACAR VITARELLA 500G", 6.20);
-        Produto produto3 = new Produto("0147", "AÇUCAR CRISTAL DA RO", 2.98);
-        Produto produto4 = new Produto("6703", "NESCAFE REFIL 50G", 5.10);
-        Produto produto5 = new Produto("0504", "FLOCAO NUTRIVITA500G", 2.98);
-        Produto produto6 = new Produto("2278", "FOSFORO OLHO C 10UN", 2.99);
-        Produto produto7 = new Produto("2152", "MACARRAO INST VITA85", 0.75);
-        Produto produto8 = new Produto("0038", "ESPUMA SCOTH BRITE C", 3.35);
-        Produto produto9 = new Produto("2152", "MACARRAO INST VITA85", 0.75);
+        Produto produto1 = new Produto("000014", "FARINHA FEIRA NOVA", 3.50);
+        Produto produto2 = new Produto("000011", "MACAR VITARELLA 500G", 6.20);
+        Produto produto3 = new Produto("000147", "AÇUCAR CRISTAL DA RO", 2.98);
+        Produto produto4 = new Produto("006703", "NESCAFE REFIL 50G", 5.10);
+        Produto produto5 = new Produto("000504", "FLOCAO NUTRIVITA500G", 2.98);
+        Produto produto6 = new Produto("002278", "FOSFORO OLHO C 10UN", 2.99);
+        Produto produto7 = new Produto("002152", "MACARRAO INST VITA85", 0.75);
+        Produto produto8 = new Produto("000038", "ESPUMA SCOTH BRITE C", 3.35);
+        Produto produto9 = new Produto("002152", "MACARRAO INST VITA85", 0.75);
         
         // Criando endereço
         Endereco enderecoEmpresa = new Endereco("AV. MANOEL GONCALVES DA LUZ", "469", "BONG", 
@@ -74,25 +73,25 @@ public class MainNota {
         System.out.println(linha);
         
         // Itens - todos os dados vêm dos objetos ItemVenda e Produto
-        System.out.println("\nITENS:");
-        System.out.println("#\tCódigo\tDescrição\t\tQtd\tVl. Unit\tVl. Total");
+        System.out.println("ITENS:");
+        System.out.println("#  Código  Descrição\t\t  Qtd   Vl. Unit   Vl. Total");
         int contador = 1;
         for (ItemVenda item : venda.getItens()) {
-            System.out.printf("%d\t%s\t%-20s\t%d\t%.2f\t\t%.2f%n",
-                            contador++,
-                            item.getProduto().getCodigo(),
-                            item.getProduto().getNome(),
-                            item.getQuantidade(),
-                            item.getValorUnitario(),
-                            item.getValorTotal());
+            System.out.printf("%-2d %-6s %-20s %4d UN %9.2f %11.2f%n",
+                contador++,
+                item.getProduto().getCodigo(),
+                item.getProduto().getNome(),
+                item.getQuantidade(),
+                item.getValorUnitario(),
+                item.getValorTotal());
         }
         System.out.println(linha);
         
         // Total e pagamento - dados calculados dinamicamente
-        System.out.println("\nVALOR TOTAL R$ " + String.format("%.2f", venda.getValorTotal()));
-        System.out.println("\nFORMA DE PAGAMENTO:               VALOR PAGO");
+        System.out.printf("%-48s R$ %8.2f%n", "VALOR TOTAL:", venda.getValorTotal());
+        System.out.printf("\n%-48s %8s%n", "FORMA DE PAGAMENTO:", "VALOR PAGO");
         for (Pagamento pagamento : venda.getPagamentos()) {
-            System.out.printf("%-30s R$ %.2f%n",
+            System.out.printf("%-48s R$ %8.2f%n", 
                             pagamento.getFormaPagamento().name(),
                             pagamento.getValor());
         }
@@ -114,13 +113,3 @@ public class MainNota {
         System.out.println(sb.toString());
     }
 }
-
-
-
-
-
-
-
-
-
-
