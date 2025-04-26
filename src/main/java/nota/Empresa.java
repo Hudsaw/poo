@@ -1,43 +1,24 @@
+package nota;
+
 public class Empresa {
     private String nome;
     private String cnpj;
-    private String inscricaoEstadual;
+    private String razaoSocial;
     private Endereco endereco;
     private String telefone;
-    private String email;
     
-    public Empresa(String nome, String cnpj, String inscricaoEstadual, 
-                  Endereco endereco, String telefone, String email) {
+    public Empresa(String nome, String cnpj, String razaoSocial, 
+                  Endereco endereco, String telefone) {
         this.nome = nome;
         this.cnpj = cnpj;
-        this.inscricaoEstadual = inscricaoEstadual;
+        this.razaoSocial = razaoSocial;
         this.endereco = endereco;
         this.telefone = telefone;
-        this.email = email;
     }
     
-    // Getters
-    public String getNome() {
-        return nome;
-    }
-    
-    public String getCnpj() {
-        return cnpj;
-    }
-    
-    public String getInscricaoEstadual() {
-        return inscricaoEstadual;
-    }
-    
-    public Endereco getEndereco() {
-        return endereco;
-    }
-    
-    public String getTelefone() {
-        return telefone;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
+    public String getNome() { return nome; }
+    public String getCnpj() { return cnpj; }
+    public String getRazaoSocial() { return razaoSocial; }
+    public Endereco getEndereco() { return endereco; }
+    public String getTelefone() { return telefone; }
 }
