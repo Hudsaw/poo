@@ -74,7 +74,7 @@ public class MainNota {
         
         // Itens - todos os dados vêm dos objetos ItemVenda e Produto
         System.out.println("ITENS:");
-        System.out.println("#  Código  Descrição\t\t  Qtd   Vl. Unit   Vl. Total");
+        System.out.println("#  Código  Descrição\t\t\t  Qtd   Vl. Unit   Vl. Total");
         int contador = 1;
         for (ItemVenda item : venda.getItens()) {
             System.out.printf("%-2d %-6s %-20s %4d UN %9.2f %11.2f%n",
