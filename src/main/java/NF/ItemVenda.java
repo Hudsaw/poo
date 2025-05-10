@@ -19,4 +19,8 @@ public class  ItemVenda {
     public void setQuantidade(Double quantidade) {
         this.quantidade = quantidade;
     }
+
+    public Double getValor(){
+        return produto.getValorUnitario()*quantidade;
+    }
 }
