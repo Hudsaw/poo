@@ -1,9 +1,11 @@
 package NF;
 
 public class Empresa {
-    private Endereco endereco;
+    private Endereco endereco = new Endereco();
     private String razaoSocial;
     private String cnpj;
+    private String nomeFantasia;
+    private String telefone;
 
     public Endereco getEndereco() {
         return endereco;
@@ -29,7 +31,7 @@ public class Empresa {
         this.cnpj = cnpj;
     }
 
-    public static String getNomeFantasia() {
+    public String getNomeFantasia() {
         return nomeFantasia;
     }
 
@@ -44,7 +46,4 @@ public class Empresa {
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
-
-    private String nomeFantasia;
-    private String telefone;
 }

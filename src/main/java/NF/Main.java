@@ -2,8 +2,6 @@ package NF;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.sql.SQLOutput;
-
 public class Main {
     public static String getLinha(Integer seq,
             String codigo,String produto,Integer qtd,Double valUni
@@ -78,7 +76,12 @@ public class Main {
 
         System.out.println("\n\n\n\n\n");
 
+        ItemVenda item1 = new ItemVenda();
+        item1.setProduto(feijao);
+        item1.setQuantidade(3d);
 
+        Venda venda = new Venda();
+        venda.adicionaItem(item1);
 
 
 

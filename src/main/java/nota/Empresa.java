@@ -1,24 +1,49 @@
 package nota;
 
 public class Empresa {
-    private String nome;
-    private String cnpj;
+    private Endereco endereco = new Endereco();
     private String razaoSocial;
-    private Endereco endereco;
+    private String cnpj;
+    private static String nomeFantasia;
     private String telefone;
-    
-    public Empresa(String nome, String cnpj, String razaoSocial, 
-                  Endereco endereco, String telefone) {
-        this.nome = nome;
-        this.cnpj = cnpj;
-        this.razaoSocial = razaoSocial;
+
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
+    }
+
+    public String getRazaoSocial() {
+        return razaoSocial;
+    }
+
+    public void setRazaoSocial(String razaoSocial) {
+        this.razaoSocial = razaoSocial;
+    }
+
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+    }
+
+    public static String getNomeFantasia() {
+        return nomeFantasia;
+    }
+
+    public void setNomeFantasia(String nomeFantasia) {
+        Empresa.nomeFantasia = nomeFantasia;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
-    
-    public String getNome() { return nome; }
-    public String getCnpj() { return cnpj; }
-    public String getRazaoSocial() { return razaoSocial; }
-    public Endereco getEndereco() { return endereco; }
-    public String getTelefone() { return telefone; }
 }

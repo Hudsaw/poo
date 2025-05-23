@@ -1,8 +1,11 @@
 package NF;
 
-public class  Endereco {
+public class Endereco {
     private String logradouro;
     private String numero;
+    private String cidade;
+    private String estado;
+    private String bairro;
 
     public String getLogradouro() {
         return logradouro;
@@ -43,9 +46,4 @@ public class  Endereco {
     public void setBairro(String bairro) {
         this.bairro = bairro;
     }
-
-    private String cidade;
-    private String estado;
-    private String bairro;
-
 }

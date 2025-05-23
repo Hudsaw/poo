@@ -1,38 +1,46 @@
 package nota;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class Venda {
-    private int numero;
-    private Date data;
-    private Empresa empresa;
-    private List<ItemVenda> itens;
-    private List<Pagamento> pagamentos;
-    
-    public Venda(int numero, Empresa empresa) {
-        this.numero = numero;
-        this.data = new Date();
-        this.empresa = empresa;
-        this.itens = new ArrayList<>();
-        this.pagamentos = new ArrayList<>();
+    private final Date dataHora = new Date();
+    private ArrayList<ItemVenda> itens = new ArrayList<>();
+    private ArrayList<Pagamento> pagamentos = new ArrayList<>();
+
+    public void adicionarPagamento(Pagamento pag){
+        pagamentos.add(pag);
     }
-    
-    public void adicionarItem(ItemVenda item) {
+    private void adicionaItem(ItemVenda item){
         itens.add(item);
     }
-    
-    public void adicionarPagamento(Pagamento pagamento) {
-        pagamentos.add(pagamento);
+    private void removeItem(int indice){
+        itens.remove(indice);
     }
-    
-    public int getNumero() { return numero; }
-    public Date getData() { return data; }
-    public Empresa getEmpresa() { return empresa; }
-    public List<ItemVenda> getItens() { return itens; }
-    public List<Pagamento> getPagamentos() { return pagamentos; }
-    public double getValorTotal() {
-        return itens.stream().mapToDouble(ItemVenda::getValorTotal).sum();
+    public boolean liberarVenda(){
+        return getTotalPagamento() >= getTotal();
+    }
+    public Double getTroco(){
+        return getTotal() - getTotalPagamento();
+    }
+
+    private Double getTotalPagamento(){
+        double total = 0;
+        for (Pagamento pagamento:pagamentos){
+            total += pagamento.getValor();
+        }
+        return total;
+    }
+    private Double getTotal(){
+        double total = 0;
+        for (ItemVenda item:itens){
+            total += item.getValor();
+        }
+        return total;
+    }
+    public static void main(String[] args) {
+        System.out.println(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date()));
+        System.out.println(new SimpleDateFormat("DD/MMMM/yyyy hh:mm").format(new Date()));
     }
 }

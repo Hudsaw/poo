@@ -1,18 +1,26 @@
 package nota;
 
-public class ItemVenda {
+public class  ItemVenda {
     private Produto produto;
-    private int quantidade;
-    private double valorUnitario;
-    
-    public ItemVenda(Produto produto, int quantidade) {
-        this.produto = produto;
-        this.quantidade = quantidade;
-        this.valorUnitario = produto.getPreco();
+    private Double quantidade;
+
+    public Produto getProduto() {
+        return produto;
     }
-    
-    public Produto getProduto() { return produto; }
-    public int getQuantidade() { return quantidade; }
-    public double getValorUnitario() { return valorUnitario; }
-    public double getValorTotal() { return quantidade * valorUnitario; }
+
+    public Double getQuantidade() {
+        return quantidade;
+    }
+
+    public void setProduto(Produto produto) {
+        this.produto = produto;
+    }
+
+    public void setQuantidade(Double quantidade) {
+        this.quantidade = quantidade;
+    }
+
+    public Double getValor(){
+        return produto.getValorUnitario()*quantidade;
+    }
 }

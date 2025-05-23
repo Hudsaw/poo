@@ -1,26 +1,27 @@
 package NF;
 
-public class  Pagamento {
-    public Double getValor() {
-        return valor;
+public class Pagamento {
+    public enum Tipo {
+        DINHEIRO, PIX, CHEQUE, CREDITO,
+        DEBITO
     }
+
+    private Tipo tipo;
+    private Double valor;
 
     public void setValor(Double valor) {
         this.valor = valor;
-    }
-
-    public Tipo getTipo() {
-        return tipo;
     }
 
     public void setTipo(Tipo tipo) {
         this.tipo = tipo;
     }
 
-    public enum Tipo {
-        DINHEIRO, PIX, CHEQUE, CREDITO,
-        DEBITO
+    public Tipo getTipo() {
+        return tipo;
     }
-    private Tipo tipo;
-    private Double valor;
+
+    public Double getValor() {
+        return valor;
+    }
 }

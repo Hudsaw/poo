@@ -1,14 +1,26 @@
 package nota;
 
-public class Pagamento {
-    private MainNota.FormaPagamento formaPagamento;
-    private double valor;
-    
-    public Pagamento(MainNota.FormaPagamento formaPagamento, double valor) {
-        this.formaPagamento = formaPagamento;
+public class  Pagamento {
+    public Double getValor() {
+        return valor;
+    }
+
+    public void setValor(Double valor) {
         this.valor = valor;
     }
-    
-    public MainNota.FormaPagamento getFormaPagamento() { return formaPagamento; }
-    public double getValor() { return valor; }
+
+    public Tipo getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Tipo tipo) {
+        this.tipo = tipo;
+    }
+
+    public enum Tipo {
+        DINHEIRO, PIX, CHEQUE, CREDITO,
+        DEBITO
+    }
+    private Tipo tipo;
+    private Double valor;
 }
