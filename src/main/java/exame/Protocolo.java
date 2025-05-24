@@ -46,12 +46,19 @@ public class Protocolo {
         this.exame = exame;
     }
 
+    public Solicitacao getSolicitacao() {
+        return solicitacao;
+    }
 
-    public void imprimir(){
+    public void setSolicitacao(Solicitacao solicitacao) {
+        this.solicitacao = solicitacao;
+    }
 
+    public void imprimir() {
         StringBuilder sb = new StringBuilder();
-        sb.append(alinha(empresa.getNomeFantasia(),120, DIREITA));
-        sb.append(System.lineSeparator());
+
+        // Cabeçalho da Empresa
+        sb.append(alinha(empresa.getNomeFantasia(), 120, DIREITA)).append(System.lineSeparator());
         String endereco = String.format("%s %s %s %s %s-%s",
                 empresa.getEndereco().getLogradouro(),
                 empresa.getEndereco().getNumero(),
@@ -59,85 +66,33 @@ public class Protocolo {
                 empresa.getEndereco().getCidade(),
                 empresa.getEndereco().getCep(),
                 empresa.getEndereco().getEstado());
-        sb.append(alinha(endereco,60, CENTRO));
-        sb.append(System.lineSeparator());
-        sb.append(alinha("Tel: " + empresa.getTelefone(),60,
-                CENTRO));
-        sb.append(System.lineSeparator());
-        sb.append(alinha("Documento Auxiliar da Nota Fiscal de Consumidor Eletrônica",
-                60,
-                CENTRO));
-        sb.append(System.lineSeparator());
-        sb.append(linha(60));
-        sb.append(System.lineSeparator());
-        sb.append(alinha("EMITIDA EM CONTINGÊNCIA",60,CENTRO));
-        sb.append(System.lineSeparator());
-        sb.append(alinha("Pendente de Autorização", 60,CENTRO));
-        sb.append(System.lineSeparator());
-        sb.append(FormatadorUtil.linha(60));
-        sb.append(System.lineSeparator());
-        String cabecalho = String.format("# %s %s %s %s %s %s",
-                alinha("Código",8,DIREITA),
-                alinha("Descrição",11,DIREITA),
-                alinha("Qtde",6,DIREITA),
-                alinha("Un",4,DIREITA),
-                alinha("Valor unit.",12,DIREITA),
-                alinha("Valor total",12,DIREITA));
-        sb.append(cabecalho);
-        sb.append(System.lineSeparator());
-        sb.append(linha(60));
-        sb.append(System.lineSeparator());
-        int i=1;
-        for(ItemVenda item: venda.getItens()){
-            String itemVenda = String.format("%s %s %s %s UN X %s %s\n",
-                    formataInteiro(i,3),
-                    formataInteiro(item.getProduto().getCodigo(),6),
-                    alinha(item.getProduto().getDescricao(),26,ESQUERDA),
-                    formataDecimal(item.getQuantidade(),5),
-                    formataDecimal(item.getProduto().getValorUnitario(),5),
-                    formataDecimal(item.getValor(),5)
-            );
-            sb.append(itemVenda);
-            i++;
+        sb.append(alinha(endereco, 120, CENTRO)).append(System.lineSeparator());
+        sb.append(alinha("Tel: " + empresa.getTelefone(), 60, CENTRO)).append(System.lineSeparator());
+        sb.append(linha(120)).append(System.lineSeparator());
+
+        // Informações do Paciente
+        sb.append("PACIENTE: ").append(paciente.getNome()).append(System.lineSeparator());
+        sb.append("DATA DE NASCIMENTO: ").append(formatarData(paciente.getDataNascimento())).append(System.lineSeparator());
+        sb.append("DATA DA COLETA: ").append(formatarData(solicitacao.getDataColeta())).append(System.lineSeparator());
+        sb.append("PREVISÃO DO RESULTADO: ").append(formatarData(solicitacao.getPrevisaoResultado())).append(System.lineSeparator());
+        sb.append(linha(60)).append(System.lineSeparator());
+
+        // Tabela de Exames
+        sb.append("EXAMES SOLICITADOS").append(System.lineSeparator());
+        sb.append(String.format("%-30s %-15s", "Descrição", "Dias p/ Resultado")).append(System.lineSeparator());
+        for (Exame exame : solicitacao.getExames()) {
+            sb.append(String.format("%-30s %-15d", exame.getDescricao(), exame.getDiasParaResultado())).append(System.lineSeparator());
         }
-        sb.append(linha(60));
-        sb.append(System.lineSeparator());
-        String qtdTotalItens = String.format("%s %s\n",
-                alinha("Qtde Total de Itens",56,ESQUERDA),
-                formataInteiro(venda.getItens().size(),3)
-        );
-        sb.append(qtdTotalItens);
-        String valorTotal = String.format("%s%s\n",
-                alinha("Valor Total R$",50,ESQUERDA),
-                formataDecimal(venda.getTotal(),10)
-        );
-        sb.append(valorTotal);
-        String cabecalhoPagamento = String.format("%s%s",
-                alinha("FORMA DE PAGAMENTO",50,ESQUERDA),
-                "Valor Pago");
-        sb.append(cabecalhoPagamento);
-        sb.append(System.lineSeparator());
-        for(Pagamento pagamento: venda.getPagamentos()){
-            String pag = String.format("%s%s",
-                    alinha(pagamento.getTipo().toString(),50,ESQUERDA),
-                    formataDecimal(pagamento.getValor(),10));
-            sb.append(pag);
-            sb.append(System.lineSeparator());
-        }
-        String troco = String.format("%s%s",
-                alinha("Troco R$",50,ESQUERDA),
-                formataDecimal(venda.getTroco(),10));
-        sb.append(troco);
-        sb.append(System.lineSeparator());
-        sb.append(linha(60));
+        sb.append(linha(120)).append(System.lineSeparator());
+
         System.out.println(sb.toString());
-        String nomeArquivo = String.format("nota_fiscal_%s.txt",new Date().getTime());
-        try {
-            FileWriter fw = new FileWriter(new File(nomeArquivo));
-            fw.append(sb.toString());
-            fw.close();
+
+        // Salvar em arquivo
+        String nomeArquivo = "protocolo_" + paciente.getNome().replaceAll("\\s+", "_") + ".txt";
+        try (FileWriter fw = new FileWriter(nomeArquivo)) {
+            fw.write(sb.toString());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Erro ao salvar protocolo.", e);
         }
     }
     public static void main(String[] args) {
@@ -149,20 +104,17 @@ public class Protocolo {
         empresa.getEndereco().setCidade("GASPAR");
         empresa.getEndereco().setEstado("SC");
         empresa.setTelefone("(47)3097-0863");
+
         Protocolo protocolo = new Protocolo();
-        exame.setEmpresa(empresa);
-        Venda venda = new Venda();
-        ItemVenda arroz = new ItemVenda();
-        arroz.setProduto(ProdutoDB.buscaPorCodigo(1001));
-        arroz.setQuantidade(2d);
-        ItemVenda feijao = new ItemVenda();
-        feijao.setProduto(ProdutoDB.buscaPorCodigo(1002));
-        feijao.setQuantidade(4d);
-        venda.adicionaItem(arroz);
-        venda.adicionaItem(arroz);
-        venda.adicionaItem(feijao);
-        venda.adicionaItem(feijao);
-        nota.setVenda(venda);
+        TipoExame tipo1 = new TipoExame();
+        tipo1.setCodigo(150220);
+        tipo1.setDescricao("CULTURA AERÓBIA");
+        tipo1.setColeta("FEZES");
+        tipo1.setPrazo(5);
+
+
+        protocolo.adicionaItem(tipo1);
+
         Pagamento pagamento = new Pagamento();
         pagamento.setTipo(Pagamento.Tipo.DINHEIRO);
         pagamento.setValor(100d);
@@ -170,9 +122,8 @@ public class Protocolo {
         cartao.setTipo(Pagamento.Tipo.CREDITO);
         cartao.setValor(70d);
 
-        venda.adicionarPagamento(pagamento);
-        venda.adicionarPagamento(cartao);
-        nota.imprimir();
+
+        protocolo.imprimir();
 
     }
 

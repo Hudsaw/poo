@@ -1,40 +1,26 @@
 package exame;
 
-import javax.xml.crypto.Data;
+import java.util.Date;
 
 public class Exame {
-    private Integer codigo;
-    private String descricao;
-    private Enum Coleta{ FEZES, URINA, SANGUE}
-    private Data prazo;
+    private TipoExame tipoExame;
+    private Date dataColeta;
 
-    private tipoExame.Coleta coleta;
-
-    public String getDescricao() {
-        return descricao;
+    public TipoExame getTipoExame() {
+        return tipoExame;
     }
 
-    public void setPrazo(Data prazo) {
-        this.prazo = prazo;
+    public void setTipoExame(TipoExame tipoExame) {
+        this.tipoExame = tipoExame;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public Date getDataColeta() {
+        return dataColeta;
     }
 
-    public Integer getCodigo() {
-        return codigo;
+    public void setDataColeta(Date dataColeta) {
+        this.dataColeta = dataColeta;
     }
 
-    public Data getPrazo() {
-        return prazo;
-    }
 
-    public void setCodigo(Integer codigo) {
-        this.codigo = codigo;
-    }
-
-    public tipoExame.Coleta getColeta() {return coleta;}
-
-    public void setColeta(tipoExame.Coleta coleta) {this.coleta = coleta;}
 }

@@ -53,9 +53,9 @@ public class FormatadorUtil {
         date = new Date();
         System.out.println(formata("dd/MM/yyyy yy:MM:dd'",date));
 
-        public static String idade (LocalDate dataNasc){
+        public static String idade (LocalDate dataNascimento){
             LocalDate agora = LocalDate.now();
-            Period periodo = Period.between(dataNasc, agora);
+            Period periodo = Period.between(dataNascimento, agora);
 
             return String.format("02da%02dm%02dd", periodo.getYears(),periodo.getMonths(), periodo.getDays());
         }

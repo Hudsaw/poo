@@ -5,7 +5,7 @@ import java.util.Date;
 public class Paciente {
     private String matricula;
     private String nome;
-    private Date dataNasc;
+    private Date dataNascimento;
 
     public String getMatricula() {
         return matricula;
@@ -23,12 +23,13 @@ public class Paciente {
         this.nome = nome;
     }
 
-    public Date getDatanasc() {
-        return dataNasc;
+    public Date getDataNascimento() {
+        return dataNascimento;
     }
 
-    public void setDatanasc(Date datanasc) {
-        this.dataNasc = datanasc;
+    public void setDataNascimento(Date dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
+}
 
 
