@@ -27,7 +27,7 @@ class Solicitacao {
     public void setExames(List<Exame> exames) { this.exames = exames; }
 }
 
-class Paciente {
+class Cliente {
     private String nome;
     private Integer id;
     private String sexo;

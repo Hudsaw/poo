@@ -3,17 +3,17 @@ package exame;
 import java.util.Date;
 
 class Exame {
-    private TipoExame tipoExame;
+    private TipoItem tipoItem;
     private Date dataColeta;
 
-    public TipoExame getTipoExame() { return tipoExame; }
-    public void setTipoExame(TipoExame tipoExame) { this.tipoExame = tipoExame; }
+    public TipoItem getTipoItem() { return tipoItem; }
+    public void setTipoItem(TipoItem tipoItem) { this.tipoItem = tipoItem; }
 
     public Date getDataColeta() { return dataColeta; }
     public void setDataColeta(Date dataColeta) { this.dataColeta = dataColeta; }
 }
 
-class TipoExame {
+class TipoItem {
     private Integer codigo;
     private String descricao;
     private String coleta;

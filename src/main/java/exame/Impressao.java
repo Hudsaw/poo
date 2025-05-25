@@ -8,7 +8,7 @@ import static exame.Utilidade.Direcao.ESQUERDA;
 class Impressao {
 
     private Empresa empresa;
-    private Paciente paciente;
+    private Cliente cliente;
     private Solicitacao solicitacao;
 
     public void imprimir(String usuario, String senha) {
@@ -46,14 +46,14 @@ class Impressao {
         sb.append(Utilidade.alinha("Solicitação: " + String.valueOf(getSolicitacao().getId()), 60, ESQUERDA));
         sb.append(Utilidade.alinha("Data Solicitação: " + Utilidade.formatarDataHora(getSolicitacao().getDatasolicitacao()), 40, ESQUERDA)).append(System.lineSeparator());
 
-        sb.append(Utilidade.alinha("Paciente: " + getPaciente().getNome(), 80, ESQUERDA));
-        sb.append(util.alinha("Matrícula: " + String.valueOf(getPaciente().getId()), 40, ESQUERDA)).append(System.lineSeparator());
+        sb.append(Utilidade.alinha("Paciente: " + getCliente().getNome(), 80, ESQUERDA));
+        sb.append(util.alinha("Matrícula: " + String.valueOf(getCliente().getId()), 40, ESQUERDA)).append(System.lineSeparator());
 
-        sb.append(util.alinha("Sexo: " + getPaciente().getSexo(), 80, ESQUERDA));
+        sb.append(util.alinha("Sexo: " + getCliente().getSexo(), 80, ESQUERDA));
         sb.append(util.alinha("Prontuário: ", 40, ESQUERDA)).append(System.lineSeparator());
         
-        sb.append(util.alinha("Data de Nascimento: " + Utilidade.formatarData(getPaciente().getDataNascimento()), 80, ESQUERDA));
-        sb.append(Utilidade.alinha(util.idade(getPaciente().getDataNascimento()), 40, ESQUERDA)).append(System.lineSeparator());
+        sb.append(util.alinha("Data de Nascimento: " + Utilidade.formatarData(getCliente().getDataNascimento()), 80, ESQUERDA));
+        sb.append(Utilidade.alinha(util.idade(getCliente().getDataNascimento()), 40, ESQUERDA)).append(System.lineSeparator());
 
         sb.append(util.alinha("Responsável: " + getSolicitacao().getResponsavel(), 120, ESQUERDA)).append(System.lineSeparator());
         sb.append(util.alinha("Solicitante: " + getSolicitacao().getSolicitante(), 120, ESQUERDA)).append(System.lineSeparator());
@@ -66,9 +66,9 @@ class Impressao {
 
         // Tabela
         for (Exame exame : getSolicitacao().getExames()) {
-            sb.append(util.alinha(exame.getTipoExame().getCodigo()+" - "+exame.getTipoExame().getDescricao()+" - "+exame.getTipoExame().getColeta(), 70, ESQUERDA)); 
+            sb.append(util.alinha(exame.getTipoItem().getCodigo()+" - "+exame.getTipoItem().getDescricao()+" - "+exame.getTipoItem().getColeta(), 70, ESQUERDA)); 
             sb.append(util.alinha(Utilidade.formatarData(exame.getDataColeta()), 25, ESQUERDA));
-            java.time.LocalDate previsaoLocalDate = calculaPrevisaoResultado(exame.getTipoExame().getPrazo(), LocalDate.now());
+            java.time.LocalDate previsaoLocalDate = calculaPrevisaoResultado(exame.getTipoItem().getPrazo(), LocalDate.now());
             java.util.Date previsaoDate = java.sql.Date.valueOf(previsaoLocalDate);
             sb.append(Utilidade.alinha(Utilidade.formatarData(previsaoDate), 25, ESQUERDA)).append(System.lineSeparator());
         }
@@ -102,12 +102,12 @@ public LocalDate calculaPrevisaoResultado(int prazo, LocalDate dataColeta) {
         this.empresa = empresa;
     }
 
-    public Paciente getPaciente() {
-        return paciente;
+    public Cliente getCliente() {
+        return cliente;
     }
 
-    public void setPaciente(Paciente paciente) {
-        this.paciente = paciente;
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
     public Solicitacao getSolicitacao() {

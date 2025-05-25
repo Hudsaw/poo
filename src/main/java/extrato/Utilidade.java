@@ -1,10 +1,11 @@
-package exame;
+package extrato;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
 
 class Utilidade {
     enum Direcao { ESQUERDA, DIREITA, CENTRO }
@@ -34,14 +35,24 @@ class Utilidade {
         String valorFormatado = String.format("%.2f",valor);
         return alinha(valorFormatado,colunas,Direcao.DIREITA);
     }
-    
+
     public static String formataInteiro(Integer valor, int colunas){
-        return StringUtils.leftPad(valor.toString(),colunas,"0");
+        return String.format("%0" + colunas + "d", valor);
     }
 
     public static String formatarData(Date data) {
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
         return sdf.format(data);
+    }
+
+    public static String formatarMiniData(Date data) {
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM");
+        return sdf.format(data);
+    }
+
+    public static String formatarHora(LocalDateTime data) {
+        DateTimeFormatter formatterHora = DateTimeFormatter.ofPattern("HH:mm:ss");
+        return data.format(formatterHora);
     }
 
     public static String formatarDataHora(Date data) {
@@ -65,5 +76,18 @@ class Utilidade {
 
     public LocalDate calculaPrevisaoResultado(int diasResultado, LocalDate dataColeta) {
         return dataColeta.plusDays(diasResultado);
+    }
+
+    public static void atualizarSaldos(List<Tabela> extratos, Double saldoInicial) {
+        double saldoAtual = saldoInicial;
+        for (Tabela extrato : extratos) {
+            TipoTransacao transacao = extrato.getTipoTransacao();
+            if (transacao.getTipo() == TipoTransacao.Tipo.RECEITA) {
+                saldoAtual += transacao.getValor();
+            } else if (transacao.getTipo() == TipoTransacao.Tipo.DESPESA) {
+                saldoAtual -= transacao.getValor();
+            }
+            extrato.setSaldo(saldoAtual);
+        }
     }
 }

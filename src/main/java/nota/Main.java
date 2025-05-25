@@ -1,54 +1,45 @@
 package nota;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class Main {
-    public static String getLinha(Integer seq,
-            String codigo,String produto,Integer qtd,Double valUni
-                                  ){
-        String sb = StringUtils.leftPad(seq.toString(),3,"0");
-        sb+=" " + StringUtils.leftPad(codigo,10,"0");
-        sb+=" " + StringUtils.rightPad(StringUtils.abbreviate(produto,22),22);
-        sb+=" " + StringUtils.leftPad(qtd.toString(),3,"0") +" UN X";
-        sb+=" " + StringUtils.leftPad(String.format("%.2f",valUni),6);
-        sb+=" " + StringUtils.leftPad(String.format("%.2f",valUni*qtd),6);
 
-        return sb;
-    }
-    //Classes Wrappers Java
-    public static void print(double d){
-        System.out.println(d);
-    }
     public static void main(String[] args) {
-        Double valor = 10d;
-        //System.out.println(valor);
-        valor+=20;
-       // System.out.println(valor);
-        print(valor);
-        String nomeSupermercado = "TEM SUPERMERCADO";
-        System.out.println(StringUtils.center(nomeSupermercado,60));
-        
-        Produto feijao = new Produto();
-        feijao.setCodigo(123);
-        feijao.setDescricao("Feijao 1kg");
-        feijao.setValorUnitario(6.5);
-        Produto cafe = new Produto();
-        cafe.setCodigo(124333);
-        cafe.setDescricao("Café 3coracoes - selecao especial recanto mineiro");
-        cafe.setValorUnitario(29.59);
-       
-        System.out.println(StringUtils.center("Produtos",60,"-"));
-        System.out.println(getLinha(1,feijao.getCodigo().toString(),feijao.getDescricao(),2,feijao.getValorUnitario()));
-        System.out.println(getLinha(2,cafe.getCodigo().toString(),cafe.getDescricao(),3,cafe.getValorUnitario()));
+        Empresa empresa = new Empresa();
+        empresa.setNomeFantasia("TEM SUPERMERCADO");
+        empresa.setCnpj("31.584.005/0001-32");
+        empresa.setRazaoSocial("PRA VOCE SUPERMERCADO LTDA");
+        empresa.getEndereco().setLogradouro("Av Manoel Gonçalves da Luz");
+        empresa.getEndereco().setNumero("469");
+        empresa.getEndereco().setBairro("BONGI");
+        empresa.getEndereco().setCidade("RECIFE");
+        empresa.getEndereco().setEstado("PE");
+        empresa.setTelefone("(81)3097-0863");
 
-        System.out.println("\n\n\n\n\n");
+        Pagamento pagamento = new Pagamento();
+        pagamento.setTipo(Pagamento.Tipo.DINHEIRO);
+        pagamento.setValor(150d);
 
+        Pagamento cartao = new Pagamento();
+        cartao.setTipo(Pagamento.Tipo.CREDITO);
+        cartao.setValor(500d);
 
+        Venda venda = new Venda();
+        venda.adicionarPagamento(cartao);
+        venda.adicionarPagamento(pagamento);
+        for (int i = 101; i <= 120; i++) {
+        ItemVenda item = new ItemVenda();
+        Produto p = ProdutoDB.buscaPorCodigo(i);
+        if (p != null) {
+            item.setProduto(p);
+            item.setQuantidade(1d);
+            venda.adicionaItem(item);
+        }
+    }
 
+        NotaFiscal nota = new NotaFiscal();
+        nota.setEmpresa(empresa);
+        nota.setVenda(venda);
 
-
-
-
+        nota.imprimir();
 
     }
 }

@@ -19,19 +19,19 @@ public class Main {
         hospital.setTelefone("(47)3097-0863");
 
         // Paciente
-        Paciente paciente = new Paciente();
-        paciente.setNome("Angenor de Oliveira");
-        paciente.setId(123456);
-        paciente.setSexo("Masculino");
+        Cliente cliente = new Cliente();
+        cliente.setNome("Angenor de Oliveira");
+        cliente.setId(123456);
+        cliente.setSexo("Masculino");
         Calendar nascimento = Calendar.getInstance();
         nascimento.set(1980, Calendar.NOVEMBER, 30); 
-        paciente.setDataNascimento(nascimento.getTime());
+        cliente.setDataNascimento(nascimento.getTime());
 
         // Gerando usuário e senha
-        String primeiroNome = paciente.getNome().split(" ")[0];
-        String diaNascimento = new Utilidade().formatarData(paciente.getDataNascimento()).substring(0, 2);
+        String primeiroNome = cliente.getNome().split(" ")[0];
+        String diaNascimento = new Utilidade().formatarData(cliente.getDataNascimento()).substring(0, 2);
         String usuario = primeiroNome + diaNascimento;
-        String senha = new Utilidade().formatarData(paciente.getDataNascimento()).replaceAll("/", "");
+        String senha = new Utilidade().formatarData(cliente.getDataNascimento()).replaceAll("/", "");
 
         // Solicitação
         Solicitacao solicitacao = new Solicitacao();
@@ -41,24 +41,24 @@ public class Main {
         solicitacao.setResponsavel("Recepção Central");
 
         // Exames
-        TipoExame tipo1 = new TipoExame();
+        TipoItem tipo1 = new TipoItem();
         tipo1.setCodigo(12345);
         tipo1.setDescricao("CULTURA AERÓBIA");
         tipo1.setColeta("FEZES");
         tipo1.setPrazo(5);
 
-        TipoExame tipo2 = new TipoExame();
+        TipoItem tipo2 = new TipoItem();
         tipo2.setCodigo(67890);
         tipo2.setDescricao("HEMOGRAMA COMPLETO");
         tipo2.setColeta("SANGUE");
         tipo2.setPrazo(2);
 
         Exame exame1 = new Exame();
-        exame1.setTipoExame(tipo1);
+        exame1.setTipoItem(tipo1);
         exame1.setDataColeta(new Date());
 
         Exame exame2 = new Exame();
-        exame2.setTipoExame(tipo2);
+        exame2.setTipoItem(tipo2);
         exame2.setDataColeta(new Date());
 
         solicitacao.setExames(Arrays.asList(exame1, exame2));
@@ -66,7 +66,7 @@ public class Main {
         // Imprimir protocolo
         Impressao protocolo = new Impressao();
         protocolo.setEmpresa(hospital);
-        protocolo.setPaciente(paciente);
+        protocolo.setCliente(cliente);
         protocolo.setSolicitacao(solicitacao);
         protocolo.imprimir(usuario, senha);
     }
