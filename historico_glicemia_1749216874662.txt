@@ -1,0 +1,7 @@
+=== HISTÓRICO DE CONTROLE DE GLICEMIA ===
+
+Data/Hora        | Tipo        | Quant | Glicemia Antes | Glicemia Depois | Indicação
+----------------------------------------------------------------------------------------------------
+06/06/2025 10:33 | ATIVIDADE   | 120   | 100            | 4               | Hipoglicemia! Ingira carboidratos.
+06/06/2025 10:33 | CARBOIDRATO | 500   | 4              | 204             | Glicemia elevada. Ajuste de insulina.
+06/06/2025 10:34 | INSULINA    | 10    | 204            | 164             | Glicemia OK.

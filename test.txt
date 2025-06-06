@@ -1,0 +1,369 @@
+package simulador;
+
+import java.util.Arrays;
+import java.util.Date;
+
+public class Main {
+
+    public static void main(String[] args) {
+        
+        // Cliente
+        Cliente cliente = new Cliente();
+        cliente.setNome("Angenor de Oliveira");
+        cliente.setConta(123456);
+        cliente.setAgencia("001");
+        cliente.setBanco("Banco do Brasil");
+        cliente.setTipoConta("CORRENTE");
+        cliente.setSaldo(100.00);
+        cliente.setEspecial(3000.00);
+        cliente.setCpf("123.456.789-00");
+
+        // Solicitação
+        Solicitacao solicitacao = new Solicitacao();
+        solicitacao.setId(1001);
+        solicitacao.setDatasolicitacao(new Date());
+        solicitacao.setMaquina("PC-01");
+
+        // Entrada de dados
+        TipoTransacao tipo1 = new TipoTransacao();
+        tipo1.setTipo(TipoTransacao.Tipo.RECEITA);
+        tipo1.setDataTransacao(new Date(2025, 5, 5));
+        tipo1.setCodigo(12345);
+        tipo1.setDescricao("PROVENTO SALARIAL");
+        tipo1.setValor(1500.00);
+
+        TipoTransacao tipo2 = new TipoTransacao();
+        tipo2.setTipo(TipoTransacao.Tipo.DESPESA);
+        tipo2.setDataTransacao(new Date(2025, 5, 15));
+        tipo2.setCodigo(67890);
+        tipo2.setDescricao("BOLETO CONCESSIONARIA");
+        tipo2.setValor(325.00);
+
+        Tabela item1 = new Tabela();
+        item1.setTipoTransacao(tipo1);
+
+        Tabela item2 = new Tabela();
+        item2.setTipoTransacao(tipo2);
+
+        solicitacao.setTabelas(Arrays.asList(item1, item2));
+        Utilidade.atualizarSaldos(solicitacao.getTabelas(), cliente.getSaldo());
+
+        // Imprimir protocolo
+        Impressao tabela = new Impressao();
+        tabela.setCliente(cliente);
+        tabela.setSolicitacao(solicitacao);
+        tabela.imprimir();
+    }
+}
+
+package simulador;
+
+import java.time.LocalDateTime;
+
+import static simulador.Utilidade.Direcao.CENTRO;
+import static simulador.Utilidade.Direcao.DIREITA;
+import static simulador.Utilidade.Direcao.ESQUERDA;
+import static simulador.Utilidade.formataInteiro;
+
+class Impressao {
+
+    private Cliente Cliente;
+    private Solicitacao solicitacao;
+
+    public void imprimir() {
+        StringBuilder sb = new StringBuilder();
+        Utilidade util = new Utilidade();
+        LocalDateTime dataAtual = LocalDateTime.now();
+
+        // Cabeçalho
+        sb.append(util.linha(60)).append(System.lineSeparator());
+
+        sb.append(util.alinha("simulador Bancário", 60, CENTRO)).append(System.lineSeparator());
+
+        sb.append(util.alinha(Utilidade.formatarHora(dataAtual), 15, DIREITA)).append(System.lineSeparator());
+
+        sb.append(System.lineSeparator());
+
+        sb.append(util.alinha("simulador DA CONTA " + getCliente().getTipoConta() + ": ", 40, ESQUERDA));
+        sb.append(util.alinha(formataInteiro(getCliente().getConta(), 10), 20, ESQUERDA)).append(System.lineSeparator());
+
+        sb.append(util.alinha("NOME: " + getCliente().getNome(), 60, ESQUERDA)).append(System.lineSeparator());
+
+        sb.append(System.lineSeparator());
+
+        sb.append(util.alinha("DATA\t\tHISTORICO\t\t\tVALOR", 60, ESQUERDA)).append(System.lineSeparator());
+
+        sb.append(util.linha(60)).append(System.lineSeparator());
+
+        //Tabela
+        double saldoAtual = getCliente().getSaldo();
+
+        for (Tabela tabela : getSolicitacao().getTabelas()) {
+            sb.append(util.alinha(Utilidade.formatarMiniData(tabela.getTipoTransacao().getDataTransacao()), 10, ESQUERDA));
+            sb.append(util.alinha(tabela.getTipoTransacao().getDescricao(), 30, ESQUERDA));
+            double valor = tabela.getTipoTransacao().getValor();
+            if (tabela.getTipoTransacao().getTipo() == TipoTransacao.Tipo.DESPESA) {
+                saldoAtual -= valor;
+            } else {
+                saldoAtual += valor;
+            }
+        sb.append(util.alinha(String.format("%.2f", valor), 20, DIREITA)).append(System.lineSeparator());
+        }
+
+        sb.append(util.linha(60)).append(System.lineSeparator());
+        sb.append(System.lineSeparator());
+
+        sb.append(util.alinha("", 10, ESQUERDA));
+        sb.append(util.alinha("SALDO ATUAL: ", 20, ESQUERDA));
+        sb.append(util.alinha("R$ " + String.format("%.2f", saldoAtual), 20, DIREITA));
+        sb.append(util.alinha("", 10, ESQUERDA)).append(System.lineSeparator());
+        
+        // Disponível
+        Double disponivel = getCliente().getEspecial();
+        if(saldoAtual>0){
+            disponivel = getCliente().getEspecial() + saldoAtual;
+        } else {
+            disponivel = getCliente().getEspecial() - saldoAtual;
+        }
+
+        sb.append(util.alinha("", 10, ESQUERDA));
+        sb.append(util.alinha("ESPECIAL: ", 20, ESQUERDA));
+        sb.append(util.alinha(String.format("R$ %.2f", getCliente().getEspecial()), 20, DIREITA));
+        sb.append(util.alinha("", 10, ESQUERDA)).append(System.lineSeparator());
+
+        sb.append(util.alinha("", 10, ESQUERDA));
+        sb.append(util.alinha("DISPONÍVEL: ", 20, ESQUERDA));
+        sb.append(util.alinha(String.format("R$ %.2f", disponivel), 20, DIREITA));
+        sb.append(util.alinha("", 10, ESQUERDA)).append(System.lineSeparator());
+
+        sb.append(System.lineSeparator());
+                
+        sb.append(util.linha(60)).append(System.lineSeparator());
+
+
+        sb.append(util.alinha(getSolicitacao().getMaquina(), 30, DIREITA)).append(System.lineSeparator());
+        
+        sb.append(util.alinha("Guarde esse papelinho ô arrombado, se quex otro te vira...", 60, ESQUERDA)).append(System.lineSeparator());
+        
+        System.out.println(sb.toString());
+
+
+        // Salvar em arquivo texto
+        String nomeArquivo = "protocolo_" + getSolicitacao().getId() + ".txt";
+        try (java.io.FileWriter writer = new java.io.FileWriter(nomeArquivo)) {
+            writer.write(sb.toString());
+            System.out.println("Protocolo salvo como: " + nomeArquivo);
+        } catch (Exception e) {
+            System.err.println("Erro ao salvar o protocolo: " + e.getMessage());
+        }
+    }
+
+    public Cliente getCliente() {
+        return Cliente;
+    }
+
+    public void setCliente(Cliente Cliente) {
+        this.Cliente = Cliente;
+    }
+
+    public Solicitacao getSolicitacao() {
+        return solicitacao;
+    }
+
+    public void setSolicitacao(Solicitacao solicitacao) {
+        this.solicitacao = solicitacao;
+    }
+}
+package simulador;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+class Solicitacao {
+    private Integer id;
+    private Date datasolicitacao;
+    private String maquina;
+    private List<Tabela> tabelas = new ArrayList<>();
+
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+
+    public Date getDatasolicitacao() { return datasolicitacao; }
+    public void setDatasolicitacao(Date datasolicitacao) { this.datasolicitacao = datasolicitacao; }
+
+    public String getMaquina() { return maquina; }
+    public void setMaquina(String maquina) { this.maquina = maquina; }
+
+    public List<Tabela> getTabelas() { return tabelas; }
+    public void setTabelas(List<Tabela> tabelas) { this.tabelas = tabelas; }
+}
+
+class Cliente {
+    private String nome;
+    private Integer conta;
+    private String agencia;
+    private String banco;
+    private String tipoConta;
+    private Double saldo;
+    private Double especial;
+    private String cpf;
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public Integer getConta() { return conta; }
+    public void setConta(Integer conta) { this.conta = conta; }
+
+    public String getAgencia() { return agencia; }
+    public void setAgencia(String agencia) { this.agencia = agencia; }
+
+    public String getBanco() { return banco; }
+    public void setBanco(String banco) { this.banco = banco; }
+    
+    public String getCpf() { return cpf; }
+    public void setCpf(String cpf) { this.cpf = cpf;}
+
+    public String getTipoConta() {return tipoConta;}
+    public void setTipoConta(String tipoConta) {this.tipoConta = tipoConta;}
+
+    public Double getSaldo() { return saldo; }
+    public void setSaldo(Double saldo) { this.saldo = saldo; }
+
+    public Double getEspecial() { return especial; }
+    public void setEspecial(Double especial) { this.especial = especial;}
+}
+
+
+package simulador;
+
+import java.util.Date;
+
+class Tabela {
+    private TipoTransacao tipoTransacao;
+    private Double saldo;
+
+    public TipoTransacao getTipoTransacao() { return tipoTransacao; }
+    public void setTipoTransacao(TipoTransacao tipoTransacao) { this.tipoTransacao = tipoTransacao; }
+
+    public Double getSaldo() { return saldo; }
+    public void setSaldo(Double saldo) { this.saldo = saldo; }
+}
+
+class TipoTransacao {
+    public static enum Tipo { RECEITA, DESPESA, TRANSFERENCIA, INVESTIMENTO }
+    private Tipo tipo;
+    private Integer codigo;
+    private String descricao;
+    private Double valor;
+    private Date dataTransacao;
+    
+    public Date getDataTransacao() { return dataTransacao; }
+    public void setDataTransacao(Date dataTransacao) { this.dataTransacao = dataTransacao; }
+
+    public Tipo getTipo() { return tipo; }
+    public void setTipo(Tipo tipo) { this.tipo = tipo; }
+
+    public Integer getCodigo() { return codigo; }
+    public void setCodigo(Integer codigo) { this.codigo = codigo; }
+
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+
+    public Double getValor() { return valor; }
+    public void setValor(Double valor) { this.valor = valor; }
+}
+
+package simulador;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+class Utilidade {
+    enum Direcao { ESQUERDA, DIREITA, CENTRO }
+
+    public static String linha(int colunas) {
+        return "-".repeat(colunas);
+    }
+
+    public static String alinha(String texto, int colunas, Direcao direcao) {
+        if (texto == null) texto = "";
+        int espacos = Math.max(0, colunas - texto.length());
+        switch (direcao) {
+            case ESQUERDA:
+                return texto + " ".repeat(espacos);
+            case DIREITA:
+                return " ".repeat(espacos) + texto;
+            case CENTRO:
+                int esquerda = espacos / 2;
+                int direita = espacos - esquerda;
+                return " ".repeat(esquerda) + texto + " ".repeat(direita);
+            default:
+                return texto;
+        }
+    }
+
+    public static String formataDecimal(double valor, int colunas){
+        String valorFormatado = String.format("%.2f",valor);
+        return alinha(valorFormatado,colunas,Direcao.DIREITA);
+    }
+
+    public static String formataInteiro(Integer valor, int colunas){
+        return String.format("%0" + colunas + "d", valor);
+    }
+
+    public static String formatarData(Date data) {
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+        return sdf.format(data);
+    }
+
+    public static String formatarMiniData(Date data) {
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM");
+        return sdf.format(data);
+    }
+
+    public static String formatarHora(LocalDateTime data) {
+        DateTimeFormatter formatterHora = DateTimeFormatter.ofPattern("HH:mm:ss");
+        return data.format(formatterHora);
+    }
+
+    public static String formatarDataHora(Date data) {
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        return sdf.format(data);
+    }
+
+    public static String idade(Date dataNascimento) {
+        Calendar hoje = Calendar.getInstance();
+        Calendar nasc = Calendar.getInstance();
+        nasc.setTime(dataNascimento);
+
+        int anos = hoje.get(Calendar.YEAR) - nasc.get(Calendar.YEAR);
+        int meses = hoje.get(Calendar.MONTH) - nasc.get(Calendar.MONTH);
+        int dias = hoje.get(Calendar.DAY_OF_MONTH) - nasc.get(Calendar.DAY_OF_MONTH);
+
+        String dataHoje = formatarData(hoje.getTime());
+        
+        return "Idade em " + dataHoje + ": " + anos + "a" + meses + "m" + dias + "d";
+    }
+
+    public LocalDate calculaPrevisaoResultado(int diasResultado, LocalDate dataColeta) {
+        return dataColeta.plusDays(diasResultado);
+    }
+
+    public static void atualizarSaldos(List<Tabela> extratos, Double saldoInicial) {
+        double saldoAtual = saldoInicial;
+        for (Tabela extrato : extratos) {
+            TipoTransacao transacao = extrato.getTipoTransacao();
+            if (transacao.getTipo() == TipoTransacao.Tipo.RECEITA) {
+                saldoAtual += transacao.getValor();
+            } else if (transacao.getTipo() == TipoTransacao.Tipo.DESPESA) {
+                saldoAtual -= transacao.getValor();
+            }
+            extrato.setSaldo(saldoAtual);
+        }
+    }
+}
