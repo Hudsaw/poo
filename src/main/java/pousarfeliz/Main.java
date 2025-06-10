@@ -2,6 +2,8 @@ package pousarfeliz;
 
 import java.util.*;
 
+import java.util.*;
+
 public class Main {
     private static List<Quarto> quartos = new ArrayList<>();
     private static List<Reserva> reservas = new ArrayList<>();
@@ -20,7 +22,7 @@ public class Main {
 
     private static void menuPrincipal() {
         while (true) {
-            System.out.println("\n=== Simulação de Pousada ===");
+            System.out.println("\n=== Sistema de Pousada ===");
             System.out.println("1. Cadastrar Hóspede");
             System.out.println("2. Registrar Reserva");
             System.out.println("3. Ver Quartos Disponíveis");
@@ -61,10 +63,9 @@ public class Main {
             String tel = scanner.nextLine();
             System.out.print("Email: ");
             String email = scanner.nextLine();
-            Hospede h = new Hospede(nome, cpf, tel, email);
             System.out.println("Hóspede cadastrado com sucesso!");
         } catch (Exception e) {
-            System.out.println("Erro ao cadastrar hóspede: " + e.getMessage());
+            System.out.println("Erro ao cadastrar hóspede.");
         }
     }
 
@@ -105,7 +106,7 @@ public class Main {
         } catch (NumberFormatException e) {
             System.out.println("Erro: Digite um número válido para o quarto.");
         } catch (Exception e) {
-            System.out.println("Erro ao registrar reserva: " + e.getMessage());
+            System.out.println("Erro ao registrar reserva.");
         }
     }
 

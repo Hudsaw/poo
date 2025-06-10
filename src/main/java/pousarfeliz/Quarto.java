@@ -2,7 +2,7 @@ package pousarfeliz;
 
 public class Quarto {
     private int numero;
-    private String tipo; // simples, duplo, suite
+    private String tipo; // "Simples", "Duplo", "Suíte"
     private double valorDiaria;
     private boolean disponivel;
 
@@ -25,11 +25,19 @@ public class Quarto {
         disponivel = true;
     }
 
-    public String toString() {
-        return "Quarto " + numero + " (" + tipo + ") - R$" + valorDiaria + " | Disponível: " + disponivel;
+    public double getValorDiaria() {
+        return valorDiaria;
     }
 
     public int getNumero() {
         return numero;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public String toString() {
+        return "Quarto " + numero + " (" + tipo + ") - R$" + valorDiaria + " | Disponível: " + disponivel;
     }
 }

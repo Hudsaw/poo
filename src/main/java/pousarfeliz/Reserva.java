@@ -2,6 +2,8 @@ package pousarfeliz;
 
 import java.util.ArrayList;
 
+import java.util.ArrayList;
+
 public class Reserva {
     private static int contador = 1;
     private int codigo;
@@ -23,7 +25,11 @@ public class Reserva {
         hospedes.add(h);
     }
 
+    public double calcularTotal(int dias) {
+        return quarto.getValorDiaria() * dias;
+    }
+
     public String toString() {
-        return "Reserva #" + codigo + " | Entrada: " + dataEntrada + " | Saída: " + dataSaida + " | Quarto: " + quarto.getNumero();
+        return "Reserva #" + codigo + " | Quarto: " + quarto.getNumero();
     }
 }
