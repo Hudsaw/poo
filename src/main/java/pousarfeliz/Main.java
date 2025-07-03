@@ -1,12 +1,15 @@
 package pousarfeliz;
 
-import java.util.*;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Scanner;
 
 public class Main {
+
     private static List<Quarto> quartos = new ArrayList<>();
     private static List<Reserva> reservas = new ArrayList<>();
+    private static List<Hospede> hospedes = new ArrayList<>();
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -63,6 +66,10 @@ public class Main {
             String tel = scanner.nextLine();
             System.out.print("Email: ");
             String email = scanner.nextLine();
+
+            Hospede h = new Hospede(nome, cpf, tel, email);
+            hospedes.add(h);
+
             System.out.println("Hóspede cadastrado com sucesso!");
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar hóspede.");
@@ -76,10 +83,30 @@ public class Main {
             System.out.print("Data de saída (dd/MM): ");
             String dataSaida = scanner.nextLine();
 
+            if (hospedes.isEmpty()) {
+                System.out.println("Nenhum hóspede cadastrado. Cadastre um hóspede primeiro.");
+                return;
+            }
+
+            System.out.println("Hóspedes Cadastrados:");
+            for (int i = 0; i < hospedes.size(); i++) {
+                System.out.println((i + 1) + " - " + hospedes.get(i));
+            }
+
+            System.out.print("Código do Hóspede desejado (número da lista): ");
+            int numHospede = Integer.parseInt(scanner.nextLine());
+
+            if (numHospede < 1 || numHospede > hospedes.size()) {
+                System.out.println("Número de hóspede inválido.");
+                return;
+            }
+
+            Hospede hospedeSelecionado = hospedes.get(numHospede - 1);
+
             System.out.println("Quartos disponíveis:");
             for (Quarto q : quartos) {
                 if (q.verificarDisponibilidade()) {
-                    System.out.println(q);
+                    System.out.println("Número: " + q.getNumero() + " | Tipo: " + q.getTipo() + " | Diária: R$" + q.getValorDiaria());
                 }
             }
 
@@ -100,11 +127,12 @@ public class Main {
             }
 
             Reserva r = new Reserva(dataEntrada, dataSaida, qSelecionado);
+            r.adicionarHospede(hospedeSelecionado);
             reservas.add(r);
-            System.out.println("Reserva realizada com sucesso!");
 
+            System.out.println("Reserva realizada com sucesso!");
         } catch (NumberFormatException e) {
-            System.out.println("Erro: Digite um número válido para o quarto.");
+            System.out.println("Erro: Digite um número válido.");
         } catch (Exception e) {
             System.out.println("Erro ao registrar reserva.");
         }

@@ -2,8 +2,6 @@ package pousarfeliz;
 
 import java.util.ArrayList;
 
-import java.util.ArrayList;
-
 public class Reserva {
     private static int contador = 1;
     private int codigo;
@@ -30,6 +28,22 @@ public class Reserva {
     }
 
     public String toString() {
-        return "Reserva #" + codigo + " | Quarto: " + quarto.getNumero();
+    StringBuilder sb = new StringBuilder();
+    sb.append("Reserva #").append(codigo)
+      .append(" | Data de Entrada: ").append(dataEntrada)
+      .append(" | Data de Saída: ").append(dataSaida)
+      .append(" | Quarto: ").append(quarto.getNumero())
+      .append(" (").append(quarto.getTipo()).append(")")
+      .append(" | Hóspede: ");
+
+    if (hospedes.isEmpty()) {
+        sb.append("Nenhum hóspede adicionado.");
+    } else {
+        for (Hospede h : hospedes) {
+            sb.append("\n - ").append(h.getNome()).append(" (CPF: ").append(h.getCpf()).append(")");
+        }
     }
+
+    return sb.toString();
+}
 }

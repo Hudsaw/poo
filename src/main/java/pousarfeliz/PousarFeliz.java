@@ -1,5 +1,9 @@
 package pousarfeliz;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 public class PousarFeliz {
         public static List<Quarto> quartos = new ArrayList<>();
         public static Scanner scanner = new Scanner(System.in);
@@ -49,7 +53,7 @@ public class PousarFeliz {
         // Reserva automática
         int qtdeReservada = 0;
         for (Quarto q : quartos) {
-            if (rand.nextDouble() < 0.7) { // 70% de chance de reserva
+            if (rand.nextDouble() < 0.7) { 
                 q.ocupar();
                 caixa += q.getValorDiaria();
                 qtdeReservada++;
@@ -64,7 +68,7 @@ public class PousarFeliz {
         System.out.println("Gasto com limpeza dos quartos: R$" + limpeza);
 
         // Evento aleatório com peso dos quartos
-        caixa = Evento.ocorrerEvento(caixa, quartos); // Atualiza o caixa com o retorno do evento
+        caixa = Evento.ocorrerEvento(caixa, quartos); 
 
         // Verifica se o caixa está negativo
         if (caixa < 0) {
@@ -107,13 +111,13 @@ public class PousarFeliz {
             case 2:
                 tipo = "Duplo";
                 valorDiaria = 200;
-                custoCompra = 800;
+                custoCompra = 900;
                 bloco = 2;
                 break;
             case 3:
                 tipo = "Suíte";
                 valorDiaria = 300;
-                custoCompra = 1200;
+                custoCompra = 1300;
                 bloco = 3;
                 break;
             default:
