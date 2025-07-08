@@ -1,13 +1,13 @@
 package pousarfeliz;
 
-public class CafeDaManha implements Servico {
+public class PasseioGuiado implements Servico {
     @Override
     public String getNome() {
-        return "Café da Manhã";
+        return "Passeio Guiado";
     }
 
     @Override
     public double getPreco() {
-        return 20.0;
+        return 50.0;
     }
 }
