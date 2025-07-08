@@ -268,45 +268,47 @@ public class Main {
     }
 
     private static void gerarRelatorioFinanceiro() {
-    try {
-        System.out.print("Digite a data para o relatório (dd/MM): ");
-        String dataRelatorio = scanner.nextLine();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate dataRef = LocalDate.parse(dataRelatorio + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        try {
+            System.out.print("Digite a data para o relatório (dd/MM): ");
+            String dataRelatorio = scanner.nextLine();
 
-        int totalReservasAtivas = 0;
-        double totalFaturado = 0;
-        int quartosOcupados = 0;
-        int quartosDisponiveis = 0;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate dataRef = LocalDate.parse(dataRelatorio + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-        for (Quarto q : quartos) {
-            if (q.verificarDisponibilidade()) {
-                quartosDisponiveis++;
-            } else {
-                quartosOcupados++;
+            int totalReservasCheckout = 0;
+            double totalFaturado = 0;
+            int quartosOcupados = 0;
+            int quartosDisponiveis = 0;
+
+            for (Quarto q : quartos) {
+                if (q.verificarDisponibilidade()) {
+                    quartosDisponiveis++;
+                } else {
+                    quartosOcupados++;
+                }
             }
-        }
 
-        for (Reserva r : reservas) {
-            LocalDate inicio = LocalDate.parse(r.getDataEntrada() + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            LocalDate fim = LocalDate.parse(r.getDataSaida() + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            for (Reserva r : reservas) {
+                LocalDate dataSaidaReserva = LocalDate.parse(r.getDataSaida() + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-            if (!dataRef.isBefore(inicio) && !dataRef.isAfter(fim.minusDays(1))) {
-                totalReservasAtivas++;
-                totalFaturado += r.calcularTotal(); 
+                if (dataSaidaReserva.isEqual(dataRef)) {
+                    totalReservasCheckout++;
+                    totalFaturado += r.calcularTotal();
+                }
             }
+
+            System.out.println("\n=== RELATÓRIO FINANCEIRO DO DIA ===");
+            System.out.println("Data: " + dataRelatorio);
+            System.out.println("Total de Reservas finalizadas (checkout) no dia: " + totalReservasCheckout);
+            System.out.println("Total Faturado Estimado: R$ " + String.format("%.2f", totalFaturado));
+            System.out.println("Quartos Ocupados: " + quartosOcupados);
+            System.out.println("Quartos Disponíveis: " + quartosDisponiveis);
+            System.out.println("==============================\n");
+
+        } catch (Exception e) {
+            System.out.println("Erro ao gerar relatório: " + e.getMessage());
         }
-
-        System.out.println("\n=== RELATÓRIO FINANCEIRO DO DIA ===");
-        System.out.println("Data: " + dataRelatorio);
-        System.out.println("Total de Reservas Ativas no dia: " + totalReservasAtivas);
-        System.out.println("Total Faturado Estimado: R$ " + String.format("%.2f", totalFaturado));
-        System.out.println("Quartos Ocupados: " + quartosOcupados);
-        System.out.println("Quartos Disponíveis: " + quartosDisponiveis);
-        System.out.println("==============================\n");
-
-    } catch (Exception e) {
-        System.out.println("Erro ao gerar relatório: " + e.getMessage());
     }
-}
+
+    
 }

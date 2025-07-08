@@ -69,6 +69,7 @@ public class Reserva {
 
         if (hoje.isBefore(saida)) {
             System.out.println("Está fazendo check-out antes da data de saída. O pagamento será integral!");
+            this.dataSaida = hoje.format(DateTimeFormatter.ofPattern("dd/MM"));
         }
 
         checkOutRealizado = true;
@@ -77,18 +78,13 @@ public class Reserva {
     }
 
     public double calcularTotal() {
-        LocalDate inicio = LocalDate.parse(dataEntrada + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        LocalDate fim = LocalDate.parse(dataSaida + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        long dias = ChronoUnit.DAYS.between(inicio, fim);
-
-        double totalQuarto = quarto.getValorDiaria() * dias;
-
-        double totalServicos = servicos.stream()
-                .mapToDouble(Servico::getPreco)
-                .sum();
-
-        return totalQuarto + totalServicos;
-    }
+    LocalDate inicio = LocalDate.parse(dataEntrada + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    LocalDate fim = LocalDate.parse(dataSaida + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    long dias = ChronoUnit.DAYS.between(inicio, fim);
+    double totalQuarto = quarto.getValorDiaria() * dias;
+    double totalServicos = servicos.stream().mapToDouble(Servico::getPreco).sum();
+    return totalQuarto + totalServicos;
+}
 
     public String toString() {
         StringBuilder sb = new StringBuilder();

@@ -1,5 +1,8 @@
 package pousarfeliz;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -94,9 +97,9 @@ public class Main {
 
     private static void registrarReserva() {
         try {
-            System.out.print("Data de entrada (dd/MM/yy): ");
+            System.out.print("Data de entrada (dd/MM): ");
             String dataEntrada = scanner.nextLine();
-            System.out.print("Data de saída (dd/MM/yy): ");
+            System.out.print("Data de saída (dd/MM): ");
             String dataSaida = scanner.nextLine();
 
             if (hospedes.isEmpty()) {
@@ -266,52 +269,62 @@ public class Main {
     }
 
     private static void gerarRelatorioFinanceiro() {
-    try {
-        System.out.print("Digite a data para o relatório (dd/MM): ");
-        String dataRelatorio = scanner.nextLine();
+        try {
+            System.out.print("Digite a data para o relatório (dd/MM): ");
+            String dataRelatorio = scanner.nextLine();
 
-        // Contadores
-        int totalReservas = 0;
-        double totalFaturado = 0;
-        int quartosOcupados = 0;
-        int quartosDisponiveis = 0;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate dataRef = LocalDate.parse(dataRelatorio + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-        for (Quarto q : quartos) {
-            if (q.verificarDisponibilidade()) {
-                quartosDisponiveis++;
-            } else {
-                quartosOcupados++;
+            int totalReservasCheckout = 0;
+            double totalFaturado = 0;
+            int quartosOcupados = 0;
+            int quartosDisponiveis = 0;
+
+            for (Quarto q : quartos) {
+                if (q.verificarDisponibilidade()) {
+                    quartosDisponiveis++;
+                } else {
+                    quartosOcupados++;
+                }
             }
-        }
 
-        // Verifica cada reserva
-        for (Reserva r : reservas) {
-            // Simples verificação se a data está entre entrada e saída da reserva
-            boolean estaNoPeriodo = estaNaData(r.getDataEntrada(), r.getDataSaida(), dataRelatorio);
-            if (estaNoPeriodo) {
-                totalReservas++;
-                totalFaturado += r.calcularTotal(1); // Considera apenas uma diária por reserva
+            for (Reserva r : reservas) {
+                LocalDate dataSaidaReserva = LocalDate.parse(r.getDataSaida() + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+                if (dataSaidaReserva.isEqual(dataRef)) {
+                    totalReservasCheckout++;
+
+                    LocalDate dataEntradaReserva = LocalDate.parse(r.getDataEntrada() + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                    long diasEstadia = ChronoUnit.DAYS.between(dataEntradaReserva, dataSaidaReserva);
+
+                    totalFaturado += r.calcularTotal((int) diasEstadia);
+                }
             }
+
+            System.out.println("\n=== RELATÓRIO FINANCEIRO DO DIA ===");
+            System.out.println("Data: " + dataRelatorio);
+            System.out.println("Total de Reservas finalizadas (checkout) no dia: " + totalReservasCheckout);
+            System.out.println("Total Faturado Estimado: R$ " + String.format("%.2f", totalFaturado));
+            System.out.println("Quartos Ocupados: " + quartosOcupados);
+            System.out.println("Quartos Disponíveis: " + quartosDisponiveis);
+            System.out.println("==============================\n");
+
+        } catch (Exception e) {
+            System.out.println("Erro ao gerar relatório: " + e.getMessage());
         }
-
-        System.out.println("\n=== RELATÓRIO FINANCEIRO DO DIA ===");
-        System.out.println("Data: " + dataRelatorio);
-        System.out.println("Total de Reservas Ativas no dia: " + totalReservas);
-        System.out.println("Total Faturado Estimado: R$ " + String.format("%.2f", totalFaturado));
-        System.out.println("Quartos Ocupados: " + quartosOcupados);
-        System.out.println("Quartos Disponíveis: " + quartosDisponiveis);
-        System.out.println("==============================\n");
-
-    } catch (Exception e) {
-        System.out.println("Erro ao gerar relatório.");
     }
-}
+
+    
 }
 
+
+no reserva.java
 package pousarfeliz;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -336,19 +349,6 @@ public class Reserva {
         quarto.ocupar();
     }
 
-    private static boolean calculaData(String dataInicio, String dataFim, String dataVerificacao) {
-        try {
-            LocalDate inicio = LocalDate.parse(dataInicio + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            LocalDate fim = LocalDate.parse(dataFim + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            LocalDate data = LocalDate.parse(dataVerificacao + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-
-            return !data.isBefore(inicio) && !data.isAfter(fim.minusDays(1)); // Inclui entrada, exclui saída
-        } catch (Exception e) {
-            System.out.println("Erro ao comparar datas.");
-            return false;
-        }
-    }
-
     public void adicionarServico(Servico servico) {
         servicos.add(servico);
     }
@@ -358,33 +358,56 @@ public class Reserva {
     }
 
     public void realizarCheckIn() {
-        if (!checkInRealizado) {
-            checkInRealizado = true;
-            System.out.println("Check-in realizado com sucesso!");
-        } else {
+        if (checkInRealizado) {
             System.out.println("Check-in já foi realizado.");
+            return;
         }
+
+        LocalDate hoje = LocalDate.now();
+        LocalDate entrada = LocalDate.parse(dataEntrada + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        if (hoje.isBefore(entrada)) {
+            System.out.println("Não é possível fazer check-in antes da data de entrada.");
+            return;
+        }
+
+        checkInRealizado = true;
+        System.out.println("Check-in realizado com sucesso!");
     }
 
     public void realizarCheckOut() {
-        if (checkInRealizado && !checkOutRealizado) {
-            checkOutRealizado = true;
-            quarto.liberar();
-            System.out.println("Check-out realizado com sucesso! Quarto liberado.");
-        } else if (!checkInRealizado) {
-            System.out.println("Não é possível fazer check-out sem check-in.");
-        } else {
+        if (checkOutRealizado) {
             System.out.println("Check-out já foi realizado.");
+            return;
         }
+
+        if (!checkInRealizado) {
+            System.out.println("Não é possível fazer check-out sem check-in.");
+            return;
+        }
+
+        LocalDate hoje = LocalDate.now();
+        LocalDate saida = LocalDate.parse(dataSaida + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        if (hoje.isBefore(saida)) {
+            System.out.println("Está fazendo check-out antes da data de saída. O pagamento será integral!");
+        }
+
+        checkOutRealizado = true;
+        quarto.liberar();
+        System.out.println("Check-out realizado com sucesso! Quarto liberado.");
     }
 
-    public double calcularTotal(int dias) {
-        double totalQuarto = quarto.getValorDiaria() * dias;
-        double totalServicos = 0;
+    public double calcularTotal() {
+        LocalDate inicio = LocalDate.parse(dataEntrada + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        LocalDate fim = LocalDate.parse(dataSaida + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        long dias = ChronoUnit.DAYS.between(inicio, fim);
 
-        for (Servico s : servicos) {
-            totalServicos += s.getPreco();
-        }
+        double totalQuarto = quarto.getValorDiaria() * dias;
+
+        double totalServicos = servicos.stream()
+                .mapToDouble(Servico::getPreco)
+                .sum();
 
         return totalQuarto + totalServicos;
     }
@@ -422,5 +445,13 @@ public class Reserva {
         sb.append("\n");
 
         return sb.toString();
+    }
+
+    public String getDataEntrada() {
+        return dataEntrada;
+    }
+
+    public String getDataSaida() {
+        return dataSaida;
     }
 }
