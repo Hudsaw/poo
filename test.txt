@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+
     private static List<Quarto> quartos = new ArrayList<>();
     private static List<Reserva> reservas = new ArrayList<>();
+    private static List<Hospede> hospedes = new ArrayList<>();
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -26,9 +28,13 @@ public class Main {
             System.out.println("\n=== Sistema de Pousada ===");
             System.out.println("1. Cadastrar Hóspede");
             System.out.println("2. Registrar Reserva");
-            System.out.println("3. Ver Quartos Disponíveis");
-            System.out.println("4. Ver Reservas");
-            System.out.println("5. Sair");
+            System.out.println("3. Realizar Check-in");
+            System.out.println("4. Adicionar Serviço na Reserva");
+            System.out.println("5. Ver Reservas");
+            System.out.println("6. Realizar Check-out");
+            System.out.println("7. Ver Quartos Disponíveis");
+            System.out.println("8. Gerar Relatório Financeiro");
+            System.out.println("9. Sair");
             System.out.print("Escolha uma opção: ");
             int opcao = Integer.parseInt(scanner.nextLine());
 
@@ -40,12 +46,24 @@ public class Main {
                     registrarReserva();
                     break;
                 case 3:
-                    verQuartosDisponiveis();
+                    realizarCheckIn();
                     break;
                 case 4:
-                    verReservas();
+                    adicionarServicoNaReserva();
                     break;
                 case 5:
+                    verReservas();
+                    break;
+                case 6:
+                    realizarCheckOut();
+                    break;
+                case 7:
+                    verQuartosDisponiveis();
+                    break;
+                case 8:
+                    gerarRelatorioFinanceiro();
+                    break;
+                case 9:
                     System.out.println("Encerrando...");
                     return;
                 default:
@@ -64,6 +82,10 @@ public class Main {
             String tel = scanner.nextLine();
             System.out.print("Email: ");
             String email = scanner.nextLine();
+
+            Hospede h = new Hospede(nome, cpf, tel, email);
+            hospedes.add(h);
+
             System.out.println("Hóspede cadastrado com sucesso!");
         } catch (Exception e) {
             System.out.println("Erro ao cadastrar hóspede.");
@@ -72,27 +94,35 @@ public class Main {
 
     private static void registrarReserva() {
         try {
-            System.out.print("Data de entrada (dd/MM): ");
+            System.out.print("Data de entrada (dd/MM/yy): ");
             String dataEntrada = scanner.nextLine();
-            System.out.print("Data de saída (dd/MM): ");
+            System.out.print("Data de saída (dd/MM/yy): ");
             String dataSaida = scanner.nextLine();
 
-            System.out.println("Hospedes Cadastrados:");
-            
-            String nome = scanner.nextLine();
-            for (Hospede h : hospedes){
-                if (h.buscarHospede(nome)){
-                    System.out.println(h);
-                }
+            if (hospedes.isEmpty()) {
+                System.out.println("Nenhum hóspede cadastrado. Cadastre um hóspede primeiro.");
+                return;
             }
 
-            System.out.print("Código do Hospede desejado: ");
+            System.out.println("Hóspedes Cadastrados:");
+            for (int i = 0; i < hospedes.size(); i++) {
+                System.out.println((i + 1) + " - " + hospedes.get(i));
+            }
+
+            System.out.print("Código do Hóspede desejado (número da lista): ");
             int numHospede = Integer.parseInt(scanner.nextLine());
-        
+
+            if (numHospede < 1 || numHospede > hospedes.size()) {
+                System.out.println("Número de hóspede inválido.");
+                return;
+            }
+
+            Hospede hospedeSelecionado = hospedes.get(numHospede - 1);
+
             System.out.println("Quartos disponíveis:");
             for (Quarto q : quartos) {
                 if (q.verificarDisponibilidade()) {
-                    System.out.println(q);
+                    System.out.println("Número: " + q.getNumero() + " | Tipo: " + q.getTipo() + " | Diária: R$" + q.getValorDiaria());
                 }
             }
 
@@ -112,15 +142,116 @@ public class Main {
                 return;
             }
 
-            Reserva r = new Reserva(dataEntrada, dataSaida, numHospede, qSelecionado);
+            Reserva r = new Reserva(dataEntrada, dataSaida, qSelecionado);
+            r.adicionarHospede(hospedeSelecionado);
             reservas.add(r);
-            System.out.println("Reserva realizada com sucesso!");
 
+            System.out.println("Reserva realizada com sucesso!");
         } catch (NumberFormatException e) {
-            System.out.println("Erro: Digite um número válido para o quarto.");
+            System.out.println("Erro: Digite um número válido.");
         } catch (Exception e) {
             System.out.println("Erro ao registrar reserva.");
         }
+    }
+
+    private static void realizarCheckIn() {
+        if (reservas.isEmpty()) {
+            System.out.println("Nenhuma reserva encontrada.");
+            return;
+        }
+
+        System.out.println("Selecione uma reserva para realizar o check-in:");
+        for (int i = 0; i < reservas.size(); i++) {
+            System.out.println((i + 1) + " - " + reservas.get(i));
+        }
+
+        System.out.print("Número da reserva: ");
+        int numReserva = Integer.parseInt(scanner.nextLine());
+
+        if (numReserva < 1 || numReserva > reservas.size()) {
+            System.out.println("Reserva inválida.");
+            return;
+        }
+
+        Reserva r = reservas.get(numReserva - 1);
+        r.realizarCheckIn();
+    }
+
+    private static void adicionarServicoNaReserva() {
+        if (reservas.isEmpty()) {
+            System.out.println("Não há reservas cadastradas.");
+            return;
+        }
+
+        System.out.println("Selecione a reserva para adicionar serviço:");
+        for (int i = 0; i < reservas.size(); i++) {
+            System.out.println((i + 1) + " - " + reservas.get(i));
+        }
+
+        System.out.print("Número da reserva: ");
+        int numReserva = Integer.parseInt(scanner.nextLine());
+
+        if (numReserva < 1 || numReserva > reservas.size()) {
+            System.out.println("Reserva inválida.");
+            return;
+        }
+
+        Reserva r = reservas.get(numReserva - 1);
+
+        System.out.println("Escolha um serviço para adicionar:");
+        System.out.println("1 - Café da Manhã (R$20)");
+        System.out.println("2 - Lavanderia (R$30)");
+        System.out.println("3 - Passeio Guiado (R$50)");
+
+        System.out.print("Opção: ");
+        int opcao = Integer.parseInt(scanner.nextLine());
+
+        switch (opcao) {
+            case 1:
+                r.adicionarServico(new CafeDaManha());
+                break;
+            case 2:
+                r.adicionarServico(new Lavanderia());
+                break;
+            case 3:
+                r.adicionarServico(new PasseioGuiado());
+                break;
+            default:
+                System.out.println("Opção inválida.");
+                return;
+        }
+
+        System.out.println("Serviço adicionado com sucesso!");
+    }
+
+    private static void verReservas() {
+        System.out.println("Reservas atuais:");
+        for (Reserva r : reservas) {
+            System.out.println(r);
+        }
+    }
+
+    private static void realizarCheckOut() {
+        if (reservas.isEmpty()) {
+            System.out.println("Nenhuma reserva encontrada.");
+            return;
+        }
+
+        System.out.println("Selecione uma reserva para realizar o check-out:");
+        for (int i = 0; i < reservas.size(); i++) {
+            System.out.println((i + 1) + " - " + reservas.get(i));
+        }
+
+        System.out.print("Número da reserva: ");
+        int numReserva = Integer.parseInt(scanner.nextLine());
+
+        if (numReserva < 1 || numReserva > reservas.size()) {
+            System.out.println("Reserva inválida.");
+            return;
+        }
+
+        Reserva r = reservas.get(numReserva - 1);
+        r.realizarCheckOut();
     }
 
     private static void verQuartosDisponiveis() {
@@ -134,44 +265,67 @@ public class Main {
         }
     }
 
-    private static void verReservas() {
-        System.out.println("Reservas atuais:");
-        for (Reserva r : reservas) {
-            System.out.println(r);
+    private static void gerarRelatorioFinanceiro() {
+    try {
+        System.out.print("Digite a data para o relatório (dd/MM): ");
+        String dataRelatorio = scanner.nextLine();
+
+        // Contadores
+        int totalReservas = 0;
+        double totalFaturado = 0;
+        int quartosOcupados = 0;
+        int quartosDisponiveis = 0;
+
+        for (Quarto q : quartos) {
+            if (q.verificarDisponibilidade()) {
+                quartosDisponiveis++;
+            } else {
+                quartosOcupados++;
+            }
         }
+
+        // Verifica cada reserva
+        for (Reserva r : reservas) {
+            // Simples verificação se a data está entre entrada e saída da reserva
+            boolean estaNoPeriodo = estaNaData(r.getDataEntrada(), r.getDataSaida(), dataRelatorio);
+            if (estaNoPeriodo) {
+                totalReservas++;
+                totalFaturado += r.calcularTotal(1); // Considera apenas uma diária por reserva
+            }
+        }
+
+        System.out.println("\n=== RELATÓRIO FINANCEIRO DO DIA ===");
+        System.out.println("Data: " + dataRelatorio);
+        System.out.println("Total de Reservas Ativas no dia: " + totalReservas);
+        System.out.println("Total Faturado Estimado: R$ " + String.format("%.2f", totalFaturado));
+        System.out.println("Quartos Ocupados: " + quartosOcupados);
+        System.out.println("Quartos Disponíveis: " + quartosDisponiveis);
+        System.out.println("==============================\n");
+
+    } catch (Exception e) {
+        System.out.println("Erro ao gerar relatório.");
     }
+}
 }
 
 package pousarfeliz;
 
-public class Hospede extends Pessoa {
-    private String telefone;
-    private String email;
-
-    public Hospede(String nome, String cpf, String telefone, String email) {
-        super(nome, cpf);
-        this.telefone = telefone;
-        this.email = email;
-    }
-
-    public String toString() {
-        return "Hóspede: " + getNome() + " | CPF: " + getCpf();
-    }
-}
-
-package pousarfeliz;
-
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-
-import java.util.ArrayList;
+import java.util.List;
 
 public class Reserva {
+
     private static int contador = 1;
     private int codigo;
     private String dataEntrada;
     private String dataSaida;
     private ArrayList<Hospede> hospedes;
+    private List<Servico> servicos = new ArrayList<>();
     private Quarto quarto;
+    private boolean checkInRealizado = false;
+    private boolean checkOutRealizado = false;
 
     public Reserva(String dataEntrada, String dataSaida, Quarto quarto) {
         this.codigo = contador++;
@@ -182,15 +336,91 @@ public class Reserva {
         quarto.ocupar();
     }
 
+    private static boolean calculaData(String dataInicio, String dataFim, String dataVerificacao) {
+        try {
+            LocalDate inicio = LocalDate.parse(dataInicio + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            LocalDate fim = LocalDate.parse(dataFim + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            LocalDate data = LocalDate.parse(dataVerificacao + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+            return !data.isBefore(inicio) && !data.isAfter(fim.minusDays(1)); // Inclui entrada, exclui saída
+        } catch (Exception e) {
+            System.out.println("Erro ao comparar datas.");
+            return false;
+        }
+    }
+
+    public void adicionarServico(Servico servico) {
+        servicos.add(servico);
+    }
+
     public void adicionarHospede(Hospede h) {
         hospedes.add(h);
     }
 
+    public void realizarCheckIn() {
+        if (!checkInRealizado) {
+            checkInRealizado = true;
+            System.out.println("Check-in realizado com sucesso!");
+        } else {
+            System.out.println("Check-in já foi realizado.");
+        }
+    }
+
+    public void realizarCheckOut() {
+        if (checkInRealizado && !checkOutRealizado) {
+            checkOutRealizado = true;
+            quarto.liberar();
+            System.out.println("Check-out realizado com sucesso! Quarto liberado.");
+        } else if (!checkInRealizado) {
+            System.out.println("Não é possível fazer check-out sem check-in.");
+        } else {
+            System.out.println("Check-out já foi realizado.");
+        }
+    }
+
     public double calcularTotal(int dias) {
-        return quarto.getValorDiaria() * dias;
+        double totalQuarto = quarto.getValorDiaria() * dias;
+        double totalServicos = 0;
+
+        for (Servico s : servicos) {
+            totalServicos += s.getPreco();
+        }
+
+        return totalQuarto + totalServicos;
     }
 
     public String toString() {
-        return "Reserva #" + codigo + " | Quarto: " + quarto.getNumero();
+        StringBuilder sb = new StringBuilder();
+        sb.append("Reserva #").append(codigo)
+                .append(" | Data de Entrada: ").append(dataEntrada)
+                .append(" | Data de Saída: ").append(dataSaida)
+                .append(" | Quarto: ").append(quarto.getNumero())
+                .append(" (").append(quarto.getTipo()).append(")")
+                .append(" | Hóspede: ");
+
+        if (hospedes.isEmpty()) {
+            sb.append("Nenhum hóspede adicionado.");
+        } else {
+            for (Hospede h : hospedes) {
+                sb.append("\n - ").append(h.getNome()).append(" (CPF: ").append(h.getCpf()).append(")");
+            }
+        }
+
+        sb.append("\n | Check-in: ").append(checkInRealizado ? "Realizado" : "Pendente");
+        sb.append(" | Check-out: ").append(checkOutRealizado ? "Realizado" : "Pendente");
+
+        sb.append("\n | Serviços:");
+        if (servicos.isEmpty()) {
+            sb.append(" Nenhum serviço adicionado.");
+        } else {
+            for (Servico s : servicos) {
+                sb.append("\n - ").append(s.getNome()).append(" (R$ ").append(s.getPreco()).append(")");
+            }
+        }
+
+        sb.append("\n | Total estimado: R$ ").append(calcularTotal());
+        sb.append("\n");
+
+        return sb.toString();
     }
 }

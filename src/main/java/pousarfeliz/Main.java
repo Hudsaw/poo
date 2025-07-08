@@ -1,5 +1,7 @@
 package pousarfeliz;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -28,10 +30,13 @@ public class Main {
             System.out.println("\n=== Sistema de Pousada ===");
             System.out.println("1. Cadastrar Hóspede");
             System.out.println("2. Registrar Reserva");
-            System.out.println("3. Adicionar Serviço na Reserva");
-            System.out.println("4. Ver Quartos Disponíveis");
+            System.out.println("3. Realizar Check-in");
+            System.out.println("4. Adicionar Serviço na Reserva");
             System.out.println("5. Ver Reservas");
-            System.out.println("6. Sair");
+            System.out.println("6. Realizar Check-out");
+            System.out.println("7. Ver Quartos Disponíveis");
+            System.out.println("8. Gerar Relatório Financeiro");
+            System.out.println("9. Sair");
             System.out.print("Escolha uma opção: ");
             int opcao = Integer.parseInt(scanner.nextLine());
 
@@ -43,15 +48,24 @@ public class Main {
                     registrarReserva();
                     break;
                 case 3:
-                    adicionarServicoNaReserva();
+                    realizarCheckIn();
                     break;
                 case 4:
-                    verQuartosDisponiveis();
+                    adicionarServicoNaReserva();
                     break;
                 case 5:
                     verReservas();
                     break;
                 case 6:
+                    realizarCheckOut();
+                    break;
+                case 7:
+                    verQuartosDisponiveis();
+                    break;
+                case 8:
+                    gerarRelatorioFinanceiro();
+                    break;
+                case 9:
                     System.out.println("Encerrando...");
                     return;
                 default:
@@ -86,8 +100,6 @@ public class Main {
             String dataEntrada = scanner.nextLine();
             System.out.print("Data de saída (dd/MM): ");
             String dataSaida = scanner.nextLine();
-            System.out.print("Número de diárias: ");
-            int diarias = Integer.parseInt(scanner.nextLine());
 
             if (hospedes.isEmpty()) {
                 System.out.println("Nenhum hóspede cadastrado. Cadastre um hóspede primeiro.");
@@ -132,7 +144,7 @@ public class Main {
                 return;
             }
 
-            Reserva r = new Reserva(dataEntrada, dataSaida, diarias, qSelecionado);
+            Reserva r = new Reserva(dataEntrada, dataSaida, qSelecionado);
             r.adicionarHospede(hospedeSelecionado);
             reservas.add(r);
 
@@ -144,52 +156,105 @@ public class Main {
         }
     }
 
-    private static void adicionarServicoNaReserva() {
-    if (reservas.isEmpty()) {
-        System.out.println("Não há reservas cadastradas.");
-        return;
-    }
-
-    System.out.println("Selecione a reserva para adicionar serviço:");
-    for (int i = 0; i < reservas.size(); i++) {
-        System.out.println((i + 1) + " - " + reservas.get(i));
-    }
-
-    System.out.print("Número da reserva: ");
-    int numReserva = Integer.parseInt(scanner.nextLine());
-
-    if (numReserva < 1 || numReserva > reservas.size()) {
-        System.out.println("Reserva inválida.");
-        return;
-    }
-
-    Reserva r = reservas.get(numReserva - 1);
-
-    System.out.println("Escolha um serviço para adicionar:");
-    System.out.println("1 - Café da Manhã (R$20)");
-    System.out.println("2 - Lavanderia (R$30)");
-    System.out.println("3 - Passeio Guiado (R$50)");
-
-    System.out.print("Opção: ");
-    int opcao = Integer.parseInt(scanner.nextLine());
-
-    switch (opcao) {
-        case 1:
-            r.adicionarServico(new CafeDaManha());
-            break;
-        case 2:
-            r.adicionarServico(new Lavanderia());
-            break;
-        case 3:
-            r.adicionarServico(new PasseioGuiado());
-            break;
-        default:
-            System.out.println("Opção inválida.");
+    private static void realizarCheckIn() {
+        if (reservas.isEmpty()) {
+            System.out.println("Nenhuma reserva encontrada.");
             return;
+        }
+
+        System.out.println("Selecione uma reserva para realizar o check-in:");
+        for (int i = 0; i < reservas.size(); i++) {
+            System.out.println((i + 1) + " - " + reservas.get(i));
+        }
+
+        System.out.print("Número da reserva: ");
+        int numReserva = Integer.parseInt(scanner.nextLine());
+
+        if (numReserva < 1 || numReserva > reservas.size()) {
+            System.out.println("Reserva inválida.");
+            return;
+        }
+
+        Reserva r = reservas.get(numReserva - 1);
+        r.realizarCheckIn();
     }
 
-    System.out.println("Serviço adicionado com sucesso!");
-}
+    private static void adicionarServicoNaReserva() {
+        if (reservas.isEmpty()) {
+            System.out.println("Não há reservas cadastradas.");
+            return;
+        }
+
+        System.out.println("Selecione a reserva para adicionar serviço:");
+        for (int i = 0; i < reservas.size(); i++) {
+            System.out.println((i + 1) + " - " + reservas.get(i));
+        }
+
+        System.out.print("Número da reserva: ");
+        int numReserva = Integer.parseInt(scanner.nextLine());
+
+        if (numReserva < 1 || numReserva > reservas.size()) {
+            System.out.println("Reserva inválida.");
+            return;
+        }
+
+        Reserva r = reservas.get(numReserva - 1);
+
+        System.out.println("Escolha um serviço para adicionar:");
+        System.out.println("1 - Café da Manhã (R$20)");
+        System.out.println("2 - Lavanderia (R$30)");
+        System.out.println("3 - Passeio Guiado (R$50)");
+
+        System.out.print("Opção: ");
+        int opcao = Integer.parseInt(scanner.nextLine());
+
+        switch (opcao) {
+            case 1:
+                r.adicionarServico(new CafeDaManha());
+                break;
+            case 2:
+                r.adicionarServico(new Lavanderia());
+                break;
+            case 3:
+                r.adicionarServico(new PasseioGuiado());
+                break;
+            default:
+                System.out.println("Opção inválida.");
+                return;
+        }
+
+        System.out.println("Serviço adicionado com sucesso!");
+    }
+
+    private static void verReservas() {
+        System.out.println("Reservas atuais:");
+        for (Reserva r : reservas) {
+            System.out.println(r);
+        }
+    }
+
+    private static void realizarCheckOut() {
+        if (reservas.isEmpty()) {
+            System.out.println("Nenhuma reserva encontrada.");
+            return;
+        }
+
+        System.out.println("Selecione uma reserva para realizar o check-out:");
+        for (int i = 0; i < reservas.size(); i++) {
+            System.out.println((i + 1) + " - " + reservas.get(i));
+        }
+
+        System.out.print("Número da reserva: ");
+        int numReserva = Integer.parseInt(scanner.nextLine());
+
+        if (numReserva < 1 || numReserva > reservas.size()) {
+            System.out.println("Reserva inválida.");
+            return;
+        }
+
+        Reserva r = reservas.get(numReserva - 1);
+        r.realizarCheckOut();
+    }
 
     private static void verQuartosDisponiveis() {
         System.out.println("Quartos disponíveis:");
@@ -202,10 +267,46 @@ public class Main {
         }
     }
 
-    private static void verReservas() {
-        System.out.println("Reservas atuais:");
-        for (Reserva r : reservas) {
-            System.out.println(r);
+    private static void gerarRelatorioFinanceiro() {
+    try {
+        System.out.print("Digite a data para o relatório (dd/MM): ");
+        String dataRelatorio = scanner.nextLine();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate dataRef = LocalDate.parse(dataRelatorio + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        int totalReservasAtivas = 0;
+        double totalFaturado = 0;
+        int quartosOcupados = 0;
+        int quartosDisponiveis = 0;
+
+        for (Quarto q : quartos) {
+            if (q.verificarDisponibilidade()) {
+                quartosDisponiveis++;
+            } else {
+                quartosOcupados++;
+            }
         }
+
+        for (Reserva r : reservas) {
+            LocalDate inicio = LocalDate.parse(r.getDataEntrada() + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            LocalDate fim = LocalDate.parse(r.getDataSaida() + "/2025", DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+            if (!dataRef.isBefore(inicio) && !dataRef.isAfter(fim.minusDays(1))) {
+                totalReservasAtivas++;
+                totalFaturado += r.calcularTotal(); 
+            }
+        }
+
+        System.out.println("\n=== RELATÓRIO FINANCEIRO DO DIA ===");
+        System.out.println("Data: " + dataRelatorio);
+        System.out.println("Total de Reservas Ativas no dia: " + totalReservasAtivas);
+        System.out.println("Total Faturado Estimado: R$ " + String.format("%.2f", totalFaturado));
+        System.out.println("Quartos Ocupados: " + quartosOcupados);
+        System.out.println("Quartos Disponíveis: " + quartosDisponiveis);
+        System.out.println("==============================\n");
+
+    } catch (Exception e) {
+        System.out.println("Erro ao gerar relatório: " + e.getMessage());
     }
+}
 }
